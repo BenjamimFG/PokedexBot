@@ -46,8 +46,8 @@ defmodule PokedexBot.Commands.Help do
   def help(channel_id) do
     message = """
     #{usage()}
-    If called without any argument this command lists all available commands.
-    If passed a `command` argument this command shows help for the specified command.
+    If called without any argument lists all available commands.
+    If passed a `command` argument shows help for the specified command.
     """
 
     Api.create_message(channel_id, message)
