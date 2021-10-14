@@ -3,6 +3,12 @@ defmodule PokedexBot.Application do
 
   @impl true
   def start(_type, _args) do
+    # init pokeapi cache on ets
+    :ets.new(:pokeapi_cache, [:named_table, :public])
+    :ets.new(:active_users, [:named_table, :public])
+    :ets.insert(:active_users, {:list, []})
+    PokedexBot.EmbedPaginator.new_paginator(:pokemon_paginator, "Pokémons", 15_158_332)
+
     children = [
       PokedexBot.ConsumerSupervisor
     ]

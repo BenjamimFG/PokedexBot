@@ -22,7 +22,8 @@ defmodule PokedexBot.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:nostrum, "~> 0.4"}
+      {:nostrum, "~> 0.4"},
+      {:httpoison, "~> 1.8"}
     ]
   end
 end

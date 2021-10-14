@@ -1,7 +1,10 @@
 import Config
 
 config :pokedex_bot,
-  prefix: "p!"
+  prefix: "p!",
+  pokeapi_url: "https://pokeapi.co/api/v2",
+  bulbapedia_url: "https://bulbapedia.bulbagarden.net/wiki",
+  pokedex_picture: "https://i.imgur.com/b9hwqWV.png"
 
 config :nostrum,
   token: System.get_env("POKEDEX_TOKEN")

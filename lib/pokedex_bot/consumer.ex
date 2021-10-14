@@ -16,12 +16,35 @@ defmodule PokedexBot.Consumer do
           |> String.split()
 
         args = List.delete_at(message, 0)
-        command = Enum.fetch!(message, 0)
+        command = String.downcase(Enum.fetch!(message, 0))
 
-        # IO.puts("command: #{command}")
-        # IO.puts("args: #{Enum.join(args, ", ")}")
+        PokedexBot.Commands.handle(command, args, msg)
+      end
+    end
+  end
 
-        PokedexBot.Commands.handle(command, args, msg.channel_id)
+  def handle_event({:MESSAGE_REACTION_ADD, msg, _ws_state}) do
+    unless Map.has_key?(msg.member.user, :bot) and msg.member.user.bot do
+      [{_, active_users}] = :ets.lookup(:active_users, :list)
+
+      case Enum.find(active_users, fn u -> u.user.id == msg.member.user.id end) do
+        nil ->
+          :noop
+
+        active_user ->
+          emoji_action_map = %{
+            "▶️" => :next,
+            "◀️" => :prev,
+            "🗑️" => :del
+          }
+
+          if msg.emoji.name in Map.keys(emoji_action_map) do
+            PokedexBot.EmbedPaginator.change_page(
+              active_user.paginator,
+              emoji_action_map[msg.emoji.name],
+              active_user.user
+            )
+          end
       end
     end
   end

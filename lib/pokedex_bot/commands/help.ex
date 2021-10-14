@@ -3,9 +3,14 @@ defmodule PokedexBot.Commands.Help do
 
   alias Nostrum.Api
 
+  alias PokedexBot.Commands.{
+    Pokemon
+  }
+
   def handle(args, channel_id) do
     available_commands = [
-      "help"
+      "help",
+      "pokemon"
     ]
 
     if Enum.empty?(args) do
@@ -25,6 +30,9 @@ defmodule PokedexBot.Commands.Help do
       case command do
         "help" ->
           help(channel_id)
+
+        "pokemon" ->
+          Pokemon.help(channel_id)
 
         _ ->
           Api.create_message(
