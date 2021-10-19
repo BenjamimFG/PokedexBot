@@ -23,6 +23,7 @@ defmodule PokedexBot.PokeApi do
     color
   )
 
+  @spec get_pokemon :: list(%{id: integer, name: String.t()})
   def get_pokemon() do
     get!("/pokemon?limit=898").body[:results]
     |> Enum.with_index()
@@ -100,6 +101,7 @@ defmodule PokedexBot.PokeApi do
     {res.status_code, parsed_body}
   end
 
+  @spec get_species_color(integer) :: String.t()
   def get_species_color(id) do
     uri = "/pokemon-species/" <> Integer.to_string(id)
 

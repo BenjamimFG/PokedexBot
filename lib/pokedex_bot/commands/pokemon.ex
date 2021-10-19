@@ -19,6 +19,8 @@ defmodule PokedexBot.Commands.Pokemon do
   alias PokedexBot.PokeApi.Cache
   alias PokedexBot.EmbedPaginator
 
+  @spec handle(list(String.t()), Nostrum.Struct.Message.t()) ::
+          :ok | Api.error() | {:ok, Nostrum.Struct.Message.t()}
   def handle(args, msg) do
     if Enum.empty?(args) do
       pokemons = Cache.get(PokeApi, :get_pokemon, [])
@@ -108,6 +110,7 @@ defmodule PokedexBot.Commands.Pokemon do
     end
   end
 
+  @spec usage :: String.t()
   def usage do
     """
     Usage:
@@ -116,6 +119,7 @@ defmodule PokedexBot.Commands.Pokemon do
     """
   end
 
+  @spec help(Nostrum.Snowflake.t()) :: Api.Error.t() | {:ok, Nostrum.Struct.Message.t()}
   def help(channel_id) do
     message = """
     #{usage()}

@@ -8,6 +8,8 @@ defmodule PokedexBot.Commands do
 
   @prefix Application.fetch_env!(:pokedex_bot, :prefix)
 
+  @spec handle(String.t(), list(String.t()), Nostrum.Struct.Message.t()) ::
+          :ok | Api.error() | {:ok, Nostrum.Struct.Message.t()}
   def handle(command, args, msg) do
     case command do
       "help" ->
@@ -21,6 +23,7 @@ defmodule PokedexBot.Commands do
     end
   end
 
+  @spec not_found(String.t()) :: String.t()
   def not_found(command) do
     """
     Command `#{command}` not found.

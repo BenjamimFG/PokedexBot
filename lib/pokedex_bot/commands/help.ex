@@ -7,6 +7,8 @@ defmodule PokedexBot.Commands.Help do
     Pokemon
   }
 
+  @spec handle(list(String.t()), Nostrum.Snowflake.t()) ::
+          Api.error() | {:ok, Nostrum.Struct.Message.t()}
   def handle(args, channel_id) do
     available_commands = [
       "help",
@@ -43,6 +45,7 @@ defmodule PokedexBot.Commands.Help do
     end
   end
 
+  @spec usage :: String.t()
   def usage do
     """
     Usage:
@@ -51,6 +54,7 @@ defmodule PokedexBot.Commands.Help do
     """
   end
 
+  @spec help(Nostrum.Snowflake.t()) :: Api.Error.t() | {:ok, Nostrum.Struct.Message.t()}
   def help(channel_id) do
     message = """
     #{usage()}
