@@ -33,70 +33,74 @@ defmodule PokedexBot.PokeApi.Pokemons do
     pokemon_str = if is_integer(pokemon), do: Integer.to_string(pokemon), else: pokemon
 
     uri = @base_url <> "/" <> pokemon_str
-    res = PokeApi.get!(uri)
+    %{status_code: status_code, body: body} = PokeApi.get!(uri)
 
-    body = res.body
+    case status_code do
+      200 ->
+        parsed_body = %{
+          id: body[:id],
+          name: String.capitalize(body[:name])
+        }
 
-    parsed_body = %{
-      id: body[:id],
-      name: String.capitalize(body[:name])
-    }
+        parsed_body =
+          body[:abilities]
+          |> Enum.map(fn el ->
+            if(el["is_hidden"],
+              do: "||`" <> el["ability"]["name"] <> "`||",
+              else: "`#{el["ability"]["name"]}`"
+            )
+          end)
+          |> (&Map.put(parsed_body, :abilities, &1)).()
 
-    parsed_body =
-      body[:abilities]
-      |> Enum.map(fn el ->
-        if(el["is_hidden"],
-          do: "||`" <> el["ability"]["name"] <> "`||",
-          else: "`#{el["ability"]["name"]}`"
-        )
-      end)
-      |> (&Map.put(parsed_body, :abilities, &1)).()
+        parsed_body =
+          body[:held_items]
+          |> Enum.map(fn el -> "`#{el["item"]["name"]}`" end)
+          |> (&Map.put(parsed_body, :held_items, &1)).()
 
-    parsed_body =
-      body[:held_items]
-      |> Enum.map(fn el -> "`#{el["item"]["name"]}`" end)
-      |> (&Map.put(parsed_body, :held_items, &1)).()
+        parsed_body =
+          body[:types]
+          |> Enum.map(fn el -> "`#{el["type"]["name"]}`" end)
+          |> (&Map.put(parsed_body, :types, &1)).()
 
-    parsed_body =
-      body[:types]
-      |> Enum.map(fn el -> "`#{el["type"]["name"]}`" end)
-      |> (&Map.put(parsed_body, :types, &1)).()
+        parsed_body =
+          parsed_body
+          |> Map.put(:sprite, body[:sprites]["front_default"])
+          |> Map.put(:shiny_sprite, body[:sprites]["front_shiny"])
 
-    parsed_body =
-      parsed_body
-      |> Map.put(:sprite, body[:sprites]["front_default"])
-      |> Map.put(:shiny_sprite, body[:sprites]["front_shiny"])
+        parsed_body =
+          Map.put(
+            parsed_body,
+            :artwork,
+            body[:sprites]["other"]["official-artwork"]["front_default"]
+          )
 
-    parsed_body =
-      Map.put(
-        parsed_body,
-        :artwork,
-        body[:sprites]["other"]["official-artwork"]["front_default"]
-      )
+        stats_atoms = %{
+          "hp" => :hp,
+          "attack" => :atk,
+          "defense" => :def,
+          "special-attack" => :sp_atk,
+          "special-defense" => :sp_def,
+          "speed" => :spd
+        }
 
-    stats_atoms = %{
-      "hp" => :hp,
-      "attack" => :atk,
-      "defense" => :def,
-      "special-attack" => :sp_atk,
-      "special-defense" => :sp_def,
-      "speed" => :spd
-    }
+        parsed_body =
+          body[:stats]
+          |> Enum.map(fn el -> {stats_atoms[el["stat"]["name"]], el["base_stat"]} end)
+          |> Enum.into(%{})
+          |> (&Map.put(parsed_body, :stats, &1)).()
 
-    parsed_body =
-      body[:stats]
-      |> Enum.map(fn el -> {stats_atoms[el["stat"]["name"]], el["base_stat"]} end)
-      |> Enum.into(%{})
-      |> (&Map.put(parsed_body, :stats, &1)).()
+        parsed_body =
+          Map.put(
+            parsed_body,
+            :color,
+            Cache.get(__MODULE__, :get_species_color, [parsed_body[:id]])
+          )
 
-    parsed_body =
-      Map.put(
-        parsed_body,
-        :color,
-        Cache.get(__MODULE__, :get_species_color, [parsed_body[:id]])
-      )
+        {status_code, parsed_body}
 
-    {res.status_code, parsed_body}
+      _ ->
+        {status_code, body}
+    end
   end
 
   @spec get_species_color(integer) :: String.t()

@@ -34,7 +34,7 @@ defmodule PokedexBot.Commands.Ability do
       if status != 200 do
         Api.create_message!(
           msg.channel_id,
-          "Item with name or id `#{ability}` not found.\n#{usage()}"
+          "Ability with name or id `#{ability}` not found.\n#{usage()}"
         )
       else
         bulbapedia_url = Application.fetch_env!(:pokedex_bot, :bulbapedia_url)

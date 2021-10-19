@@ -6,7 +6,8 @@ defmodule PokedexBot.Commands.Help do
   alias PokedexBot.Commands.{
     Pokemon,
     Item,
-    Ability
+    Ability,
+    Move
   }
 
   @spec handle(list(String.t()), Nostrum.Struct.Message.t()) ::
@@ -16,7 +17,8 @@ defmodule PokedexBot.Commands.Help do
       help: __MODULE__,
       pokemon: Pokemon,
       item: Item,
-      ability: Ability
+      ability: Ability,
+      move: Move
     }
 
     available_commands =

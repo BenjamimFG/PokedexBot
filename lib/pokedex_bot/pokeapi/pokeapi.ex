@@ -8,10 +8,16 @@ defmodule PokedexBot.PokeApi do
     color
     attributes effect_entries flavor_text_entries held_by_pokemon names
     pokemon
+    accuracy damage_class learned_by_pokemon power pp priority type machines
+    item
   )
 
   def process_request_url(uri) do
-    @url <> uri
+    if String.starts_with?(uri, @url) do
+      uri
+    else
+      @url <> uri
+    end
   end
 
   def process_response_body(body) do

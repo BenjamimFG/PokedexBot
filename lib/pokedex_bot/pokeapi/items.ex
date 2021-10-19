@@ -28,41 +28,45 @@ defmodule PokedexBot.PokeApi.Items do
     item_str = if is_integer(item), do: Integer.to_string(item), else: item
 
     uri = @base_url <> "/" <> item_str
-    res = PokeApi.get!(uri)
+    %{status_code: status_code, body: body} = PokeApi.get!(uri)
 
-    body = res.body
+    case status_code do
+      200 ->
+        parsed_body = %{
+          id: body[:id]
+        }
 
-    parsed_body = %{
-      id: body[:id]
-    }
+        parsed_body =
+          body[:names]
+          |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
+          |> Enum.fetch!(0)
+          |> Map.get("name")
+          |> (&Map.put(parsed_body, :name, &1)).()
 
-    parsed_body =
-      body[:names]
-      |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
-      |> Enum.fetch!(0)
-      |> Map.get("name")
-      |> (&Map.put(parsed_body, :name, &1)).()
+        parsed_body =
+          body[:flavor_text_entries]
+          |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
+          |> Enum.fetch!(0)
+          |> Map.get("text")
+          |> (&Map.put(parsed_body, :flavor_text, &1)).()
 
-    parsed_body =
-      body[:flavor_text_entries]
-      |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
-      |> Enum.fetch!(0)
-      |> Map.get("text")
-      |> (&Map.put(parsed_body, :flavor_text, &1)).()
+        parsed_body =
+          body[:effect_entries]
+          |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
+          |> Enum.map(fn el -> el["effect"] end)
+          |> (&Map.put(parsed_body, :effects, &1)).()
 
-    parsed_body =
-      body[:effect_entries]
-      |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
-      |> Enum.map(fn el -> el["effect"] end)
-      |> (&Map.put(parsed_body, :effects, &1)).()
+        parsed_body =
+          body[:held_by_pokemon]
+          |> Enum.map(fn el -> "`#{el["pokemon"]["name"]}`" end)
+          |> (&Map.put(parsed_body, :held_by_pokemons, &1)).()
 
-    parsed_body =
-      body[:held_by_pokemon]
-      |> Enum.map(fn el -> "`#{el["pokemon"]["name"]}`" end)
-      |> (&Map.put(parsed_body, :held_by_pokemons, &1)).()
+        parsed_body = Map.put(parsed_body, :sprite, body[:sprites]["default"])
 
-    parsed_body = Map.put(parsed_body, :sprite, body[:sprites]["default"])
+        {status_code, parsed_body}
 
-    {res.status_code, parsed_body}
+      _ ->
+        {status_code, body}
+    end
   end
 end
