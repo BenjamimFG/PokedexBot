@@ -7,6 +7,7 @@ defmodule PokedexBot.PokeApi do
     id name abilities held_items types stats sprites
     color
     attributes effect_entries flavor_text_entries held_by_pokemon names
+    pokemon
   )
 
   def process_request_url(uri) do

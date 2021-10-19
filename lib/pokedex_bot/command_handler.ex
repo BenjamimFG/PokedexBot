@@ -4,7 +4,8 @@ defmodule PokedexBot.Commands do
   alias PokedexBot.Commands.{
     Help,
     Pokemon,
-    Item
+    Item,
+    Ability
   }
 
   @prefix Application.fetch_env!(:pokedex_bot, :prefix)
@@ -12,18 +13,17 @@ defmodule PokedexBot.Commands do
   @spec handle(String.t(), list(String.t()), Nostrum.Struct.Message.t()) ::
           :ok | Api.error() | {:ok, Nostrum.Struct.Message.t()}
   def handle(command, args, msg) do
-    case command do
-      "help" ->
-        Help.handle(args, msg.channel_id)
+    commands = %{
+      "help" => Help,
+      "pokemon" => Pokemon,
+      "item" => Item,
+      "ability" => Ability
+    }
 
-      "pokemon" ->
-        Pokemon.handle(args, msg)
-
-      "item" ->
-        Item.handle(args, msg)
-
-      _ ->
-        Api.create_message(msg.channel_id, not_found(command))
+    if command in Map.keys(commands) do
+      commands[command].handle(args, msg)
+    else
+      Api.create_message(msg.channel_id, not_found(command))
     end
   end
 

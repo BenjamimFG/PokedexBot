@@ -5,16 +5,18 @@ defmodule PokedexBot.Commands.Help do
 
   alias PokedexBot.Commands.{
     Pokemon,
-    Item
+    Item,
+    Ability
   }
 
-  @spec handle(list(String.t()), Nostrum.Snowflake.t()) ::
+  @spec handle(list(String.t()), Nostrum.Struct.Message.t()) ::
           Api.error() | {:ok, Nostrum.Struct.Message.t()}
-  def handle(args, channel_id) do
+  def handle(args, msg) do
     commands = %{
       help: __MODULE__,
       pokemon: Pokemon,
-      item: Item
+      item: Item,
+      ability: Ability
     }
 
     available_commands =
@@ -31,7 +33,7 @@ defmodule PokedexBot.Commands.Help do
       message =
         message <> "\nUse **`#{@prefix}help command`** to get help about a specific command"
 
-      Api.create_message(channel_id, message)
+      Api.create_message(msg.channel_id, message)
     else
       command = Enum.fetch!(args, 0)
 
@@ -42,7 +44,7 @@ defmodule PokedexBot.Commands.Help do
           "Command `#{command}` not found.\nUse **`#{@prefix}help`** to list all available commands."
         end
 
-      Api.create_message(channel_id, help_msg)
+      Api.create_message(msg.channel_id, help_msg)
     end
   end
 

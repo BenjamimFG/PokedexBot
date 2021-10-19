@@ -9,6 +9,7 @@ defmodule PokedexBot.Application do
     :ets.insert(:active_users, {:list, []})
     PokedexBot.EmbedPaginator.new_paginator(:pokemon_paginator, "Pokémons", 15_158_332)
     PokedexBot.EmbedPaginator.new_paginator(:item_paginator, "Items", 3_447_003)
+    PokedexBot.EmbedPaginator.new_paginator(:ability_paginator, "Abilities", 1_752_220)
 
     children = [
       PokedexBot.ConsumerSupervisor

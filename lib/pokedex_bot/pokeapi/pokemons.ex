@@ -5,21 +5,21 @@ defmodule PokedexBot.PokeApi.Pokemons do
   @base_url "/pokemon"
 
   @type pokemon :: %{
-          abilities: list(String.t()),
-          artwork: String.t(),
-          color: String.t(),
-          held_items: list(String.t()),
           id: integer,
           name: String.t(),
-          sprite: String.t(),
-          shiny_sprite: String.t(),
+          color: String.t(),
+          types: list(String.t()),
+          abilities: list(String.t()),
+          held_items: list(String.t()),
           stats: any,
-          types: list(String.t())
+          artwork: String.t(),
+          sprite: String.t(),
+          shiny_sprite: String.t()
         }
 
   @spec get_pokemon :: list(%{id: integer, name: String.t()})
   def get_pokemon() do
-    PokeApi.get!(@base_url <> "?limit=1118").body[:results]
+    PokeApi.get!(@base_url <> "?limit=9999").body[:results]
     |> Enum.map(fn el ->
       %{
         id: String.to_integer(List.last(String.split(el["url"], "/", trim: true))),
