@@ -43,7 +43,7 @@ defmodule PokedexBot.Commands.Ability do
         pokemons_str =
           if Enum.empty?(body[:pokemons]),
             do: "\u200B",
-            else: Enum.join(body[:pokemons], "\n")
+            else: Enum.join(body[:pokemons], " ")
 
         embed =
           %Nostrum.Struct.Embed{}
@@ -56,7 +56,7 @@ defmodule PokedexBot.Commands.Ability do
               (body[:id] |> Integer.to_string() |> String.pad_leading(3, "0")) <>
               "\n" <> body[:flavor_text]
           )
-          |> put_field("Effect", body[:effect], false)
+          |> put_field("Effect:", body[:effect], false)
           |> put_field("Pokemons:", pokemons_str, false)
 
         Api.create_message!(msg.channel_id, embed: embed)

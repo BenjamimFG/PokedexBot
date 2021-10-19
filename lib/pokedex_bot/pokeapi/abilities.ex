@@ -52,12 +52,15 @@ defmodule PokedexBot.PokeApi.Abilities do
       |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
       |> Enum.fetch!(0)
       |> Map.get("effect")
-      |> String.replace(~r/\s+/, " ")
       |> (&Map.put(parsed_body, :effect, &1)).()
 
     parsed_body =
       body[:pokemon]
-      |> Enum.map(fn el -> "`#{el["pokemon"]["name"]}`" end)
+      |> Enum.map(fn el ->
+        if el["is_hidden"],
+          do: "||`#{el["pokemon"]["name"]}`||",
+          else: "`#{el["pokemon"]["name"]}`"
+      end)
       |> (&Map.put(parsed_body, :pokemons, &1)).()
 
     {status_code, parsed_body}
