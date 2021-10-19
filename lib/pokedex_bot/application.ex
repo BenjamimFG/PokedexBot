@@ -8,6 +8,7 @@ defmodule PokedexBot.Application do
     :ets.new(:active_users, [:named_table, :public])
     :ets.insert(:active_users, {:list, []})
     PokedexBot.EmbedPaginator.new_paginator(:pokemon_paginator, "Pokémons", 15_158_332)
+    PokedexBot.EmbedPaginator.new_paginator(:item_paginator, "Items", 3_447_003)
 
     children = [
       PokedexBot.ConsumerSupervisor

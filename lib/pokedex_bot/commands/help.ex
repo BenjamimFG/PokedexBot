@@ -4,16 +4,22 @@ defmodule PokedexBot.Commands.Help do
   alias Nostrum.Api
 
   alias PokedexBot.Commands.{
-    Pokemon
+    Pokemon,
+    Item
   }
 
   @spec handle(list(String.t()), Nostrum.Snowflake.t()) ::
           Api.error() | {:ok, Nostrum.Struct.Message.t()}
   def handle(args, channel_id) do
-    available_commands = [
-      "help",
-      "pokemon"
-    ]
+    commands = %{
+      help: __MODULE__,
+      pokemon: Pokemon,
+      item: Item
+    }
+
+    available_commands =
+      Map.keys(commands)
+      |> Enum.map(fn el -> Atom.to_string(el) end)
 
     if Enum.empty?(args) do
       message = "Available commands:\n"
@@ -29,19 +35,14 @@ defmodule PokedexBot.Commands.Help do
     else
       command = Enum.fetch!(args, 0)
 
-      case command do
-        "help" ->
-          help(channel_id)
+      help_msg =
+        if command in available_commands do
+          commands[String.to_existing_atom(command)].help()
+        else
+          "Command `#{command}` not found.\nUse **`#{@prefix}help`** to list all available commands."
+        end
 
-        "pokemon" ->
-          Pokemon.help(channel_id)
-
-        _ ->
-          Api.create_message(
-            channel_id,
-            "Command `#{command}` not found.\nUse **`#{@prefix}help`** to list all available commands."
-          )
-      end
+      Api.create_message(channel_id, help_msg)
     end
   end
 
@@ -54,14 +55,12 @@ defmodule PokedexBot.Commands.Help do
     """
   end
 
-  @spec help(Nostrum.Snowflake.t()) :: Api.Error.t() | {:ok, Nostrum.Struct.Message.t()}
-  def help(channel_id) do
-    message = """
+  @spec help :: String.t()
+  def help do
+    """
     #{usage()}
     If called without any argument lists all available commands.
     If passed a `command` argument shows help for the specified command.
     """
-
-    Api.create_message(channel_id, message)
   end
 end

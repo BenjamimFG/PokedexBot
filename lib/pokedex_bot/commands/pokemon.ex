@@ -15,7 +15,7 @@ defmodule PokedexBot.Commands.Pokemon do
 
   import Nostrum.Struct.Embed
   alias Nostrum.Api
-  alias PokedexBot.PokeApi
+  alias PokedexBot.PokeApi.Pokemons
   alias PokedexBot.PokeApi.Cache
   alias PokedexBot.EmbedPaginator
 
@@ -23,7 +23,7 @@ defmodule PokedexBot.Commands.Pokemon do
           :ok | Api.error() | {:ok, Nostrum.Struct.Message.t()}
   def handle(args, msg) do
     if Enum.empty?(args) do
-      pokemons = Cache.get(PokeApi, :get_pokemon, [])
+      pokemons = Cache.get(Pokemons, :get_pokemon, [])
 
       user_name = if msg.member.nick, do: msg.member.nick, else: msg.author.username
 
@@ -54,7 +54,7 @@ defmodule PokedexBot.Commands.Pokemon do
 
         true ->
           pokemon = Enum.fetch!(args, 0)
-          {status, body} = Cache.get(PokeApi, :get_pokemon, [pokemon])
+          {status, body} = Cache.get(Pokemons, :get_pokemon, [pokemon])
 
           if status != 200 do
             Api.create_message!(
@@ -119,18 +119,16 @@ defmodule PokedexBot.Commands.Pokemon do
     """
   end
 
-  @spec help(Nostrum.Snowflake.t()) :: Api.Error.t() | {:ok, Nostrum.Struct.Message.t()}
-  def help(channel_id) do
-    message = """
+  @spec help :: String.t()
+  def help() do
+    """
     #{usage()}
     If no argument is given returns a list of pokemons.
-    If argument pokemon_name_or_id is not present returns info about specific pokemon.
+    If argument pokemon_name_or_id is present returns info about specific pokemon.
 
     opts:
         `-sprite`: Show pokemon sprite instead of official artwork.
         `-shiny`: Show pokemon shiny sprite instead of official artwork.
     """
-
-    Api.create_message!(channel_id, message)
   end
 end

@@ -3,7 +3,8 @@ defmodule PokedexBot.Commands do
 
   alias PokedexBot.Commands.{
     Help,
-    Pokemon
+    Pokemon,
+    Item
   }
 
   @prefix Application.fetch_env!(:pokedex_bot, :prefix)
@@ -17,6 +18,9 @@ defmodule PokedexBot.Commands do
 
       "pokemon" ->
         Pokemon.handle(args, msg)
+
+      "item" ->
+        Item.handle(args, msg)
 
       _ ->
         Api.create_message(msg.channel_id, not_found(command))
