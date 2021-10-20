@@ -4,7 +4,7 @@ defmodule PokedexBot.PokeApi do
   @url Application.fetch_env!(:pokedex_bot, :pokeapi_url)
   @expected_fields ~w(
     results
-    id name abilities held_items types stats sprites
+    id name abilities held_items types stats sprites species
     color
     attributes effect_entries flavor_text_entries held_by_pokemon names
     pokemon

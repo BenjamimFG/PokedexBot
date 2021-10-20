@@ -86,7 +86,7 @@ defmodule PokedexBot.Commands.Pokemon do
               %Nostrum.Struct.Embed{}
               |> put_color(@color_map[body[:color]])
               |> put_author("Pokédex", "", pokedex_picture)
-              |> put_title(body[:name])
+              |> put_title(body[:name] <> " " <> body[:variation])
               |> put_url(bulbapedia_url <> "/" <> body[:name] <> "_(Pokémon)")
               |> put_description(
                 "#" <> (body[:id] |> Integer.to_string() |> String.pad_leading(3, "0"))

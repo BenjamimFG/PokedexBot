@@ -7,6 +7,7 @@ defmodule PokedexBot.PokeApi.Pokemons do
   @type pokemon :: %{
           id: integer,
           name: String.t(),
+          variation: String.t(),
           color: String.t(),
           types: list(String.t()),
           abilities: list(String.t()),
@@ -37,9 +38,33 @@ defmodule PokedexBot.PokeApi.Pokemons do
 
     case status_code do
       200 ->
+        %{body: species_body} = PokeApi.get!(body[:species]["url"])
+
+        name =
+          species_body[:names]
+          |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
+          |> Enum.fetch!(0)
+          |> Map.get("name")
+
+        variation = String.split(body[:name], species_body[:name], parts: 2, trim: true)
+
+        variation =
+          if length(variation) != 0 do
+            tmp =
+              Enum.fetch!(variation, 0)
+              |> String.split("-", trim: true)
+              |> Enum.map(fn el -> String.capitalize(el) end)
+              |> Enum.join(" ")
+
+            "(" <> tmp <> ")"
+          else
+            ""
+          end
+
         parsed_body = %{
           id: body[:id],
-          name: String.capitalize(body[:name])
+          name: name,
+          variation: variation
         }
 
         parsed_body =
