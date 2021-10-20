@@ -41,7 +41,7 @@ defmodule PokedexBot.PokeApi.Moves do
         parsed_body = %{
           id: body[:id],
           accuracy: body[:accuracy],
-          power: body[:power],
+          power: if(body[:power] != nil, do: body[:power], else: "--"),
           pp: body[:pp],
           priority: body[:priority]
         }
