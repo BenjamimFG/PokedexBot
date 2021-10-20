@@ -29,7 +29,8 @@ defmodule PokedexBot.Commands.Evolution do
             if length(body[:trees]) == 1 do
               ["This pokemon does not evolve"]
             else
-              [Enum.join(body[:trees], " -> ")]
+              trees = Enum.map(body[:trees], fn el -> "`#{el}`" end)
+              [Enum.join(trees, " --> ")]
             end
           end
 

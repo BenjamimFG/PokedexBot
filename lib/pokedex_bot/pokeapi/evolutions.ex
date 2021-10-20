@@ -15,14 +15,14 @@ defmodule PokedexBot.PokeApi.Evolutions do
     uri = "/pokemon-species" <> "/" <> pokemon_str
     %{status_code: status_code, body: body} = PokeApi.get!(uri)
 
-    name =
-      body[:names]
-      |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
-      |> Enum.fetch!(0)
-      |> Map.get("name")
-
     case status_code do
       200 ->
+        name =
+          body[:names]
+          |> Enum.filter(fn el -> el["language"]["name"] == "en" end)
+          |> Enum.fetch!(0)
+          |> Map.get("name")
+
         evolution_url = body[:evolution_chain]["url"]
         %{status_code: _, body: evolution_body} = PokeApi.get!(evolution_url)
 
