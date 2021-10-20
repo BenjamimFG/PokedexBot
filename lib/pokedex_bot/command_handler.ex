@@ -6,7 +6,8 @@ defmodule PokedexBot.Commands do
     Pokemon,
     Item,
     Ability,
-    Move
+    Move,
+    Evolution
   }
 
   @prefix Application.fetch_env!(:pokedex_bot, :prefix)
@@ -19,7 +20,8 @@ defmodule PokedexBot.Commands do
       "pokemon" => Pokemon,
       "item" => Item,
       "ability" => Ability,
-      "move" => Move
+      "move" => Move,
+      "evolution" => Evolution
     }
 
     if command in Map.keys(commands) do

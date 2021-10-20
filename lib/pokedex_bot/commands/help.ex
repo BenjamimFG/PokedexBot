@@ -7,7 +7,8 @@ defmodule PokedexBot.Commands.Help do
     Pokemon,
     Item,
     Ability,
-    Move
+    Move,
+    Evolution
   }
 
   @spec handle(list(String.t()), Nostrum.Struct.Message.t()) ::
@@ -18,7 +19,8 @@ defmodule PokedexBot.Commands.Help do
       pokemon: Pokemon,
       item: Item,
       ability: Ability,
-      move: Move
+      move: Move,
+      evolution: Evolution
     }
 
     available_commands =

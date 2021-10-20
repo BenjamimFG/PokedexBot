@@ -13,4 +13,5 @@ config :porcelain,
   goon_warn_if_missing: false
 
 config :logger,
-  level: :warn
+  level: :warn,
+  trucate: :infinity

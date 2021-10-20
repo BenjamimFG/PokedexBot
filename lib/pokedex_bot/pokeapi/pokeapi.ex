@@ -10,6 +10,7 @@ defmodule PokedexBot.PokeApi do
     pokemon
     accuracy damage_class learned_by_pokemon power pp priority type machines
     item
+    evolution_chain chain
   )
 
   def process_request_url(uri) do

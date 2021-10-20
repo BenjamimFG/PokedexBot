@@ -1,6 +1,5 @@
 defmodule PokedexBot.PokeApi.Moves do
   alias PokedexBot.PokeApi
-  alias PokedexBot.PokeApi.Cache
 
   @base_url "/move"
 
